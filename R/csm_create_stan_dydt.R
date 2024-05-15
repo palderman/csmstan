@@ -15,22 +15,26 @@
 #' @export
 csm_create_stan_dydt <- function(name, states,
                             parameters = NULL,
-                            forcings = NULL){
-  y_arg <- "vector y"
+                            forcings = NULL,
+                            state_name = "y",
+                            parameter_name = "theta",
+                            forcing_name = "forcings"){
+
+  state_arg <- paste0("vector ", state_name)
 
   if(!is.null(parameters)){
-    theta_arg <- "vector theta"
+    parameter_arg <- paste0("vector ", parameter_name)
   }else{
-    theta_arg <- NULL
+    parameter_arg <- NULL
   }
 
   if(!is.null(forcings)){
-    forcings_arg <- "row_vector forcings"
+    forcings_arg <- paste0("row_vector ", forcings_name)
   }else{
     forcings_arg <- NULL
   }
 
-  dydt_args <- paste0(c(y_arg, theta_arg, forcings_arg),
+  dydt_args <- paste0(c(state_arg, parameter_arg, forcings_arg),
                       collapse = ", ")
 
   dydt_signature <- paste0("vector ", name, "(", dydt_args, ")")
@@ -41,7 +45,7 @@ csm_create_stan_dydt <- function(name, states,
              .i = 1:length(states),
              .name = names(states),
              .var = states,
-             .vec_in = "y"),
+             .vec_in = state_name),
       ""
       )
 
@@ -54,7 +58,7 @@ csm_create_stan_dydt <- function(name, states,
                .i = 1:length(parameters),
                .name = names(parameters),
                .var = parameters,
-               .vec_in = "theta"),
+               .vec_in = parameter_name),
         ""
       )
   }
@@ -64,20 +68,21 @@ csm_create_stan_dydt <- function(name, states,
       "// Calculation of rate of change for state variables:",
       mapply(dydt_rate_eqs,
              .i = 1:length(states),
-             .state = states),
+             .state = states,
+             .state_name = state_name),
       ""
     )
 
   dydt_body <- c(
     dydt_states,
     dydt_parameters,
-    dydt_rates,
+    dydt_rates
   )
 
   dydt_function <- c(
     paste0(dydt_signature, "{"),
     paste0("  ", dydt_body),
-    "  return dydt;",
+    paste0("  return d", state_name, "_dt;"),
     "}"
   )
 
@@ -93,7 +98,7 @@ dydt_declaration <- function(.i, .name, .var, .vec_in){
   )
 }
 
-dydt_rate_eqs <- function(.i, .state){
-  paste0("dydt[", .i, "] = ",
+dydt_rate_eqs <- function(.i, .state, .state_name){
+  paste0("d", .state_name, "_dt[", .i, "] = ",
          attr(.state, "equation")[2],";")
 }
