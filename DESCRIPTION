@@ -1,0 +1,16 @@
+Package: csmstan
+Type: Package
+Title: Create and develop cropping systems models in Stan
+Version: 0.1.0.9000
+Author: Phillip D. Alderman
+Maintainer: Phillip D. Alderman <phillip.alderman@okstate.edu>
+Description: This package implements functions for creating and
+    developing cropping systems models in the Stan probabilistic
+    programming language.
+License: BSD-3
+Encoding: UTF-8
+LazyData: true
+Imports:
+    cmdstanr,
+    Rcpp
+RoxygenNote: 7.3.1
