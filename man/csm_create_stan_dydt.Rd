@@ -4,21 +4,23 @@
 \alias{csm_create_stan_dydt}
 \title{Create a Stan function for rate of change of state variables}
 \usage{
-csm_create_stan_dydt(name, state, parameters = NULL, forcings = NULL)
+csm_create_stan_dydt(name, state, arg_names = c(state = "y"), ...)
 }
 \arguments{
 \item{name}{name of the resulting Stan function}
 
-\item{state}{a list vector containing CSM state
+\item{arg_names}{a named character vector whose elements
+correspond to the argument name in the function to be
+generated and whose names correspond to either \code{states}
+or the name of the argument in \code{...}}
+
+\item{...}{optional arguments of list vectors containing
+CSM parameters defined using \code{\link[csmdeveloper:csm_create_parameter]{csmdeveloper::csm_create_parameter()}}
+or CSM variables defined using \code{\link[csmdeveloper:csm_create_variable]{csmdeveloper::csm_create_variable()}}}
+
+\item{states}{a list vector containing CSM state
 variables defined using \code{\link[csmdeveloper:csm_create_state]{csmdeveloper::csm_create_state()}}
 in the intended order}
-
-\item{parameters}{an optional list vector containing
-CSM parameters defined using \code{\link[csmdeveloper:csm_create_parameter]{csmdeveloper::csm_create_parameter()}}
-the names of all parameters}
-
-\item{forcings}{an optional character vector
-containing the names of all forcing variables}
 }
 \description{
 Create a Stan function for rate of change of state variables
